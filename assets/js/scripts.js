@@ -1,8 +1,9 @@
 let quotesDB = [];
+let quote = {}
 const quoteContainer = document.querySelector("#quote-container")
 const quoteText = document.querySelector("#quote")
 const authorText = document.querySelector("#author")
-const twitterBtn = document.querySelector("#twitter-button")
+const shareBtn = document.querySelector("#share-button")
 const newQuoteBtn = document.querySelector("#new-qoute")
 const loader = document.querySelector("#loader")
 
@@ -23,7 +24,7 @@ function removeLoadingSpinner() {
 function newQuote() {
     showLoadingSpinner()
     //Pick a random quote
-    const quote = quotesDB[Math.floor(Math.random() * quotesDB.length)]
+    quote = quotesDB[Math.floor(Math.random() * quotesDB.length)]
 
     // Check if author is blank and replace with "unknown"
     if (!quote.author) {
@@ -64,3 +65,18 @@ getQuotesFromAPI()
 
 
 newQuoteBtn.addEventListener('click', newQuote)
+
+shareBtn.addEventListener('click', async () => {
+    
+// Fallback, Tries to use API only if navigator.share function is available
+            if (navigator.share) {
+                navigator.share({
+  
+                    // Text that occurs over web share dialog
+                     text: quote.text,
+                     author: quote.author                
+                })
+            } else {
+                alert("Browser doesn't support this API !");
+            }
+  });
