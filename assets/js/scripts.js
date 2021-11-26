@@ -1,5 +1,4 @@
-//Global Variables
-let apiQuotes = [];
+let quotesDB = [];
 const quoteContainer = document.querySelector("#quote-container")
 const quoteText = document.querySelector("#quote")
 const authorText = document.querySelector("#author")
@@ -8,14 +7,13 @@ const newQuoteBtn = document.querySelector("#new-qoute")
 const loader = document.querySelector("#loader")
 
 
-//Show Loading
-function loading() {
+function showLoadingSpinner() {
     loader.hidden = false
     quoteContainer.hidden = true
 }
 
-//Hide Loading
-function loadingComplete() {
+
+function removeLoadingSpinner() {
     loader.hidden = true
     quoteContainer.hidden = false
 }
@@ -23,9 +21,9 @@ function loadingComplete() {
 
 //Show new quote
 function newQuote() {
-    loading()
+    showLoadingSpinner()
     //Pick a random quote
-    const quote = apiQuotes[Math.floor(Math.random() * apiQuotes.length)]
+    const quote = quotesDB[Math.floor(Math.random() * quotesDB.length)]
 
     // Check if author is blank and replace with "unknown"
     if (!quote.author) {
@@ -41,26 +39,28 @@ function newQuote() {
         quoteText.classList.remove("long-quote")
     }
     quoteText.textContent = quote.text
-    loadingComplete()
+    removeLoadingSpinner()
     
 }
 
-// Get Quotes from API
-async function getQuotes() {
-    loading()
+
+async function getQuotesFromAPI() {
+    showLoadingSpinner()
     const apiUrl = "https://type.fit/api/quotes"
     try {
         const response = await fetch(apiUrl)
-        apiQuotes = await response.json()
+        quotesDB = await response.json()
         newQuote()
 
     } catch (error) {
-        // Catch Error Here
+        console.log("Whoops, API error", error)
+        quotesDB = localQuotes
+        newQuote()
     }
     
 }
 
-getQuotes()
+getQuotesFromAPI()
 
 
 newQuoteBtn.addEventListener('click', newQuote)
